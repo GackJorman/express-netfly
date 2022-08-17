@@ -8,5 +8,5 @@ router.get("/", (req, res) => {
     res.send("User List")
 })
 
-app.use("/.netlify/funtions/api", router)
+app.use("/.netlify/functions/api", router)
 module.exports.handler = serverless(app)
