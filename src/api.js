@@ -6,29 +6,48 @@ const app = express()
 const router = express.Router()
 
 router.get("/", (req, res) => {
-    // res.send("User List")
+    //res.send("User List")
     collection.find().toArray((err, result) => {
         if (err) throw err;
         res.json(result)
     })
 })
-
 router.post("/", (req, res) => {
-    res.send("Create New User")
-})
-
-router
-.route("/:id")
-.get((req, res) => {
-    res.send(`Get a User With ID: ${req.params.id}`)
-})
-.put((req, res) => {
-    res.send(`Update a User With ID: ${req.params.id}`)
-})
-.delete((req, res) => {
-    res.send(`Delete a User With ID: ${req.params.id}`)
-})
-
+    // res.send("Create New User")
+     collection.insertOne(req.body, (err, res) => {
+         if (err) throw err;
+     })
+    res.send("1 document inserted.")
+ })
+ router
+     .route("/:id")
+     .get((req, res) => {
+        //res.send(`Get a User with ID: ${req.params.id}`)
+        const query = {
+             _id: ObjectId(req.params.id)
+        }
+        collection.findOne(query, (err, result) => {
+             if (err) throw err;
+             res.send(result)
+        })
+     })
+     .put((req, res) => {
+         //res.send(`Update a User with ID: ${req.params.id}`)
+         const query = { _id: ObjectId(req.params.id) }
+         let newvalues = { $set: req.body };
+         collection.updateOne(query, newvalues, (err, result) => {
+             if (err) throw err;
+         })
+         res.send("1 document updated.")
+     })
+     .delete((req, res) => {
+         //res.send(`Delete a User with ID: ${req.params.id}`)
+         const query = { _id: ObjectId(req.params.id) }
+         collection.deleteOne(query, (err, result) => {
+             if (err) throw err;
+         })
+         res.send("1 document deleted.")
+     })
 
 app.use("/.netlify/functions/api", router)
 module.exports.handler = serverless(app)
